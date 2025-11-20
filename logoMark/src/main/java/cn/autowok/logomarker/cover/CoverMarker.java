@@ -1,6 +1,9 @@
 package cn.autowok.logomarker.cover;
 
 import cn.autowok.logomarker.util.FileUtil;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -69,7 +72,12 @@ public class CoverMarker {
         File file = new File(filePath);
         //新文件
         String genFileName = FileUtil.genFileName(filePath, fileDir);
-        try (PDDocument document = PDDocument.load(file)) {
+//        try (PDDocument document = Loader.loadPDF(file, MemoryUsageSetting.setupMainMemoryOnly())){
+
+
+//        File file = new File("xxx.pdf");
+
+        try (PDDocument document = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
             //逐页覆盖
             for (PDPage page : document.getPages()) {
                 // 获取页面大小
@@ -85,7 +93,6 @@ public class CoverMarker {
                 try (PDPageContentStream cs = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
 
                     // TODO: 2025/7/13 可能不一定是白色的背景。
-
                     cs.setNonStrokingColor(Color.WHITE); // 设置填充颜色为白色
 //                    cs.setNonStrokingColor(Color.RED); // 设置填充颜色为白色
 //                    cs.addRect(rectX, rectY, rectWidth, rectHeight); // 添加矩形

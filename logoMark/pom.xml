@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <modelVersion>4.0.0</modelVersion>
     <groupId>cn.autowork</groupId>
     <artifactId>logoMark</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>logoMark</name>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -15,39 +17,85 @@
     </properties>
 
     <dependencies>
+
+        <!-- PDFBox 3.x 模块化 -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.29</version> <!-- 或最新版 -->
+            <version>3.0.6</version>
         </dependency>
     </dependencies>
+
     <build>
-        <finalName>logo-mark-1.0</finalName>
+        <finalName>logo-mark-1.0-mini</finalName>
         <plugins>
+            <!-- 编译插件 -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>18</release>
+                </configuration>
+            </plugin>
+
+            <!-- 可执行 JAR -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <appendAssemblyId>false</appendAssemblyId> <!-- 去掉后缀 -->
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <archive>
                         <manifest>
                             <mainClass>cn.autowok.logomarker.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+<!--不做裁切-->
+<!--            &lt;!&ndash; jlink 打包最小 JRE &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jlink-plugin</artifactId>-->
+<!--                <version>3.2.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>build-jre</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>jlink</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash; 模块化 JAR &ndash;&gt;-->
+<!--                            <addModules>-->
+<!--                                logoMark-->
+<!--&lt;!&ndash;                                ,&ndash;&gt;-->
+<!--&lt;!&ndash;                                org.apache.pdfbox,&ndash;&gt;-->
+<!--&lt;!&ndash;                                org.apache.fontbox,&ndash;&gt;-->
+<!--&lt;!&ndash;                                org.apache.pdfbox.io&ndash;&gt;-->
+<!--&lt;!&ndash;                                ,&ndash;&gt;-->
+<!--&lt;!&ndash;                                org.apache.commons.logging&ndash;&gt;-->
+<!--                            </addModules>-->
+
+<!--&lt;!&ndash;                            &lt;!&ndash; 启动器 &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                            <launcher>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <name>run</name>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <module>logoMark/cn.autowok.logomarker.Main</module>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </launcher>&ndash;&gt;-->
+
+<!--                            <launcher name="run" module="logoMark/cn.autowok.logomarker.Main"/>-->
+
+<!--                            &lt;!&ndash; 压缩与优化 &ndash;&gt;-->
+<!--                            <compress>2</compress>-->
+<!--                            <stripDebug>true</stripDebug>-->
+<!--                            <noHeaderFiles>true</noHeaderFiles>-->
+<!--                            <noManPages>true</noManPages>-->
+
+<!--                            &lt;!&ndash; 输出目录 &ndash;&gt;-->
+<!--                            <output>${project.build.directory}/min-jre</output>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
         </plugins>
     </build>
 
