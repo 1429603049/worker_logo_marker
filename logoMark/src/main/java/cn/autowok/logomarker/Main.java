@@ -16,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         //加载配置。
-        Map<String, Object> configMap = ConfLoader.loadConfigByYaml();
+        Map<String, Object> configMap = ConfLoader.loadConfigByYaml(null);
 
         //获取指定目录下的pdf文件。
         List<String> filePathList = FileUtil.getFilePathList(configMap.get("pdfReadPath").toString());
