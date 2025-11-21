@@ -1,4 +1,4 @@
-package cn.autowok.logomarker.util;
+package cn.autowork.logomark.itext.util;
 
 import java.io.File;
 import java.util.ArrayList;

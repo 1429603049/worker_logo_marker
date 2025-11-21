@@ -1,21 +1,20 @@
-package cn.autowok.logomarker.cover;
+package cn.autowork.logomark.itext.cover;
 
-import cn.autowok.logomarker.util.FileUtil;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import cn.autowork.logomark.itext.util.FileUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 public class CoverMarker {
 
-    private static LogoMark markByDefType(LogoMark logoMark, PDRectangle mediaBox) {
+    private static LogoMark markByDefType(LogoMark logoMark, Rectangle mediaBox) {
         LogoMark defMark = new LogoMark();
         float pageWidth = mediaBox.getWidth();
         float pageHeight = mediaBox.getHeight();
@@ -72,36 +71,33 @@ public class CoverMarker {
         File file = new File(filePath);
         //新文件
         String genFileName = FileUtil.genFileName(filePath, fileDir);
-//        try (PDDocument document = Loader.loadPDF(file, MemoryUsageSetting.setupMainMemoryOnly())){
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(file), new PdfWriter(genFileName))) {
+            int numberOfPages = pdf.getNumberOfPages();
 
-
-//        File file = new File("xxx.pdf");
-
-        try (PDDocument document = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
             //逐页覆盖
-            for (PDPage page : document.getPages()) {
+            for (int i = 1; i <= numberOfPages; i++) {
+                PdfPage page = pdf.getPage(i);
+
                 // 获取页面大小
-                PDRectangle mediaBox = page.getMediaBox();
+                Rectangle mediaBox = page.getMediaBox();
+//                Rectangle pageSize = page.getPageSize();
                 LogoMark defType = markByDefType(logoMark, mediaBox);
 
-////                // 假设水印在右下角 150x100 区域
-//                float rectX = pageWidth - 160; // 离右边 10px
-//                float rectY = 20;               // 离下边 20px
-//                float rectWidth = 150;
-//                float rectHeight = 100;
-                // 创建内容流，在原内容上叠加（AppendMode.APPEND）
-                try (PDPageContentStream cs = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                Rectangle rect = new Rectangle(
+                        defType.getRectX(),
+                        defType.getRectY(),
+                        defType.getRectWidth(),
+                        defType.getRectHeight()
+                );
 
-                    // TODO: 2025/7/13 可能不一定是白色的背景。
-                    cs.setNonStrokingColor(Color.WHITE); // 设置填充颜色为白色
-//                    cs.setNonStrokingColor(Color.RED); // 设置填充颜色为白色
-//                    cs.addRect(rectX, rectY, rectWidth, rectHeight); // 添加矩形
-                    cs.addRect(defType.getRectX(), defType.getRectY(), defType.getRectWidth(), defType.getRectHeight()); // 添加矩形
-                    cs.fill(); // 填充矩形
-                }
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
+                pdfCanvas.saveState(); // 保存图形状态
+                pdfCanvas.setFillColor(ColorConstants.WHITE); // 填充颜色
+                pdfCanvas.rectangle(defType.getRectX(), defType.getRectY(), defType.getRectWidth(), defType.getRectHeight());
+                pdfCanvas.fill();
+                pdfCanvas.restoreState(); // 恢复图形状态
             }
-            document.save(genFileName);
-            System.out.println("新PDF : " + genFileName);
+            System.out.println("itext新PDF : " + genFileName);
         } catch (FileNotFoundException e) {
             System.out.println("FileNotFoundException : " + e.getMessage());
         } catch (Exception e) {

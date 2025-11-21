@@ -1,9 +1,9 @@
-package cn.autowok.logomarker;
+package cn.autowok.logomark.pdfbox;
 
-import cn.autowok.logomarker.config.ConfLoader;
-import cn.autowok.logomarker.cover.CoverMarker;
-import cn.autowok.logomarker.cover.LogoMark;
-import cn.autowok.logomarker.util.FileUtil;
+import cn.autowok.logomark.pdfbox.config.ConfLoader;
+import cn.autowok.logomark.pdfbox.cover.CoverMarker;
+import cn.autowok.logomark.pdfbox.cover.LogoMark;
+import cn.autowok.logomark.pdfbox.util.FileUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -15,15 +15,24 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        //加载配置。
-        Map<String, Object> configMap = ConfLoader.loadConfigByYaml(null);
 
+//        org.apache.pdfbox.io.IOUtils.UNMAP_SUPPORTED
+        // TODO: 2025/11/22 禁用unmap,依靠gc自动处理。
+        // 考虑后续怎么升级他。当前：pdfbpx.io包，关掉该日志的详细输出。
+
+        //加载配置。
+
+//        开发环境，指定配置文件加载位置。
+//        Map<String, Object> configMap = ConfLoader.loadConfigByYaml(
+//                "D:\\work\\p_idea\\worker_logo_marker\\logoMark\\src\\main\\resources\\conf"
+//        );
+
+        Map<String, Object> configMap = ConfLoader.loadConfigByYaml();
         //获取指定目录下的pdf文件。
         List<String> filePathList = FileUtil.getFilePathList(configMap.get("pdfReadPath").toString());
         if (filePathList.isEmpty()) {
             System.out.println("没有发现PDF");
         }
-
         //创建输出目录
         String pdfWritePath = configMap.get("pdfWritePath").toString();
         FileUtil.createDirectories(pdfWritePath);

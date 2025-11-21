@@ -8,70 +8,124 @@
     <artifactId>logoMark</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>logoMark</name>
+
+    <parent>
+        <groupId>cn.autowork</groupId>
+        <artifactId>autowork-parent</artifactId>
+        <version>1.0</version>
+    </parent>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--        <pdfbox.version>3.0.6</pdfbox.version>-->
+        <pdfbox.version>3.0.7-SNAPSHOT</pdfbox.version>
+
+        <commons-logging.version>1.3.5</commons-logging.version>
+        <bouncycastle.version>1.82</bouncycastle.version>
+
     </properties>
 
     <dependencies>
 
-        <!-- PDFBox 3.x 模块化 -->
+        <!-- PDFBox -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>3.0.6</version>
+            <version>${pdfbox.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>fontbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+
+        <!-- 日志 -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
+
+        <!-- may throw NoClassDefError with PDFs that use public key encryption if bouncycastle not included -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bouncycastle.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>logo-mark-1.0-mini</finalName>
-        <plugins>
-            <!-- 编译插件 -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <release>18</release>
-                </configuration>
-            </plugin>
+        <finalName>LogoMark-1.0</finalName>
 
-            <!-- 可执行 JAR -->
-            <plugin>
+        <plugins>
+             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>cn.autowok.logomarker.Main</mainClass>
+                            <mainClass>cn.autowok.logomark.pdfbox.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- jlink 插件: 生成最小运行时 -->
             <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.8.0</version>
-                <configuration>
-                    <outfile>logoMark.exe</outfile>       <!-- 输出 exe 名称 -->
-                    <jar>${project.build.directory}/logo-mark-1.0-mini.jar</jar>  <!-- 主 jar -->
-                    <dontWrapJar>false</dontWrapJar>
-                    <headerType>gui</headerType>
-                    <jreMinVersion>18</jreMinVersion>       <!-- 最低 JRE 版本 -->
-                    <bundledJrePath>minijre</bundledJrePath> <!-- 内置裁剪后的 JRE -->
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>make-jlink-image</id>
                         <goals>
-                            <goal>launch4j</goal>
+                            <goal>jlink</goal>
                         </goals>
+                        <configuration>
+                            <!--                            忽略签名-->
+                            <ignoreSigningInformation>true</ignoreSigningInformation>
+                            <!-- 输出路径 -->
+                            <outputDirectory>${project.build.directory}/logoMark-runtime</outputDirectory>
+
+                            <!--                            指定自定义模块:新打包的模块-->
+                            <modulePaths>
+                                <modulePath>${project.build.outputDirectory}</modulePath> <!-- 自定义模块 -->
+                                <!--                                <modulePath>${settings.localRepository}/org/apache/pdfbox/pdfbox-3.0.7-SNAPSHOT/pdfbox-3.0.7-SNAPSHOT.jar</modulePath>-->
+                                <!--                                <modulePath>${settings.localRepository}/org/apache/pdfbox/fontbox-3.0.7-SNAPSHOT/fontbox-3.0.7-SNAPSHOT.jar</modulePath>-->
+                                <!--                                <modulePath>${settings.localRepository}/org/bouncycastle/bcprov-jdk18on/1.82/bcprov-jdk18on-1.82.jar</modulePath>-->
+                                <!--                                <modulePath>${settings.localRepository}/org/bouncycastle/bcpkix-jdk18on/1.82/bcpkix-jdk18on-1.82.jar</modulePath>-->
+                                <!--                                <modulePath>${settings.localRepository}/org/bouncycastle/bcutil-jdk18on/1.82/bcutil-jdk18on-1.82.jar</modulePath>-->
+                                <!--                                <modulePath>${settings.localRepository}/commons-logging/commons-logging/1.3.5/commons-logging-1.3.5.jar</modulePath>-->
+                            </modulePaths>
+                            <!-- 添加模块 -->
+                            <addModules>
+                                cn.autowok.logomark.pdfbox
+                            </addModules>
+
+                            <!-- 压缩和优化 -->
+                            <compress>2</compress>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                            <noManPages>true</noManPages>
+
+                            <classifier>runtime</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
-
 </project>

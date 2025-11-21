@@ -1,5 +1,0 @@
-## pdf 水印去除。
-方案，用白色方块覆盖。
-## 由于需要依赖jdk环境，现升级18，准备做打包裁剪jre工作。
-mini分支，做jre裁剪。用jlink或jpackage。
-mini-launch4j。尝试压缩。

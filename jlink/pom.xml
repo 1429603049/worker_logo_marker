@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.autowork</groupId>
+        <artifactId>autowork-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>jlink</artifactId>
+
+    <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+        <maven.compiler.target>18</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.autowork</groupId>
+            <artifactId>logoMark</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- jlink 插件: 生成最小运行时 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>make-jlink-image</id>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 忽略签名-->
+                            <ignoreSigningInformation>true</ignoreSigningInformation>
+                            <!-- 输出路径 -->
+                            <outputDirectory>${project.build.directory}/logoMark-runtime</outputDirectory>
+
+                            <!-- 指定自定义模块:新打包的模块-->
+                            <modulePaths>
+                                <modulePath>${project.build.outputDirectory}</modulePath> <!-- 自定义模块 -->
+                            </modulePaths>
+                            <!-- 添加模块 -->
+                            <addModules>
+                                cn.autowok.logomarker
+                            </addModules>
+
+                            <!-- 压缩和优化 -->
+                            <compress>2</compress>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                            <noManPages>true</noManPages>
+
+                            <classifier>runtime</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

@@ -1,4 +1,4 @@
-package cn.autowok.logomarker.config;
+package cn.autowok.logomark.pdfbox.config;
 
 /**
  * 配置实体

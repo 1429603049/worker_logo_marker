@@ -1,0 +1,13 @@
+# 输入目录
+pdfReadPath: D:/work/p_idea/worker_logo_marker/logoMarkItext/src/main/resources
+# 输出目录
+pdfWritePath: D:/work/p_idea/worker_logo_marker/logoMarkItext/src/main/resources/out
+
+# 锚点 1-左下角 2-右下角 3-右上角 4-左上角
+markType: 2
+
+markX: 100
+markY: 100
+markWidth: 100
+markHeight: 100
+

@@ -1,4 +1,4 @@
-package cn.autowok.logomarker.cover;
+package cn.autowork.logomark.itext.cover;
 
 /**
  * 实体

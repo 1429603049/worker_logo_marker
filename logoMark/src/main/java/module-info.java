@@ -1,9 +1,13 @@
-module logoMark {
+module cn.autowok.logomark.pdfbox {
     requires java.base;
     requires java.desktop;
     requires org.apache.commons.logging;
-    requires org.apache.pdfbox;      // 自动模块名
-    requires org.apache.fontbox;     // 自动模块名
-    requires org.apache.pdfbox.io;   // 自动模块名
-    exports cn.autowok.logomarker;
+    requires org.apache.pdfbox;
+    requires org.apache.fontbox;
+
+    requires org.bouncycastle.provider;
+    requires org.bouncycastle.util;
+    requires org.bouncycastle.pkix;
+
+    exports cn.autowok.logomark.pdfbox;
 }
