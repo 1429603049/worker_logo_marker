@@ -50,52 +50,27 @@
                     </archive>
                 </configuration>
             </plugin>
-<!--不做裁切-->
-<!--            &lt;!&ndash; jlink 打包最小 JRE &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jlink-plugin</artifactId>-->
-<!--                <version>3.2.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>build-jre</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>jlink</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            &lt;!&ndash; 模块化 JAR &ndash;&gt;-->
-<!--                            <addModules>-->
-<!--                                logoMark-->
-<!--&lt;!&ndash;                                ,&ndash;&gt;-->
-<!--&lt;!&ndash;                                org.apache.pdfbox,&ndash;&gt;-->
-<!--&lt;!&ndash;                                org.apache.fontbox,&ndash;&gt;-->
-<!--&lt;!&ndash;                                org.apache.pdfbox.io&ndash;&gt;-->
-<!--&lt;!&ndash;                                ,&ndash;&gt;-->
-<!--&lt;!&ndash;                                org.apache.commons.logging&ndash;&gt;-->
-<!--                            </addModules>-->
-
-<!--&lt;!&ndash;                            &lt;!&ndash; 启动器 &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                            <launcher>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <name>run</name>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <module>logoMark/cn.autowok.logomarker.Main</module>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </launcher>&ndash;&gt;-->
-
-<!--                            <launcher name="run" module="logoMark/cn.autowok.logomarker.Main"/>-->
-
-<!--                            &lt;!&ndash; 压缩与优化 &ndash;&gt;-->
-<!--                            <compress>2</compress>-->
-<!--                            <stripDebug>true</stripDebug>-->
-<!--                            <noHeaderFiles>true</noHeaderFiles>-->
-<!--                            <noManPages>true</noManPages>-->
-
-<!--                            &lt;!&ndash; 输出目录 &ndash;&gt;-->
-<!--                            <output>${project.build.directory}/min-jre</output>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.8.0</version>
+                <configuration>
+                    <outfile>logoMark.exe</outfile>       <!-- 输出 exe 名称 -->
+                    <jar>${project.build.directory}/logo-mark-1.0-mini.jar</jar>  <!-- 主 jar -->
+                    <dontWrapJar>false</dontWrapJar>
+                    <headerType>gui</headerType>
+                    <jreMinVersion>18</jreMinVersion>       <!-- 最低 JRE 版本 -->
+                    <bundledJrePath>minijre</bundledJrePath> <!-- 内置裁剪后的 JRE -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
